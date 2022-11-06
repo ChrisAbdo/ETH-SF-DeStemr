@@ -36,12 +36,6 @@ const AppBody: React.FC<Props> = ({ state, setApiKey, createStream }) => {
     case APP_STATES.CREATE_BUTTON:
       return (
         <div className="w-full h-3/5 flex items-center justify-center">
-          {/* <button
-            className="text-2xl border border-black rounded p-2"
-            onClick={createStream}
-          >
-            Create Stream
-          </button> */}
           <button
             onClick={createStream}
             className="relative inline-block px-4 py-2  group"
@@ -169,8 +163,6 @@ const AppBody: React.FC<Props> = ({ state, setApiKey, createStream }) => {
                 {streamKey}
               </span>
               <button
-                // onClick={() => copyTextToClipboard(streamKey)}
-                // on click copy streamkey to clipboard and also show a toast notification
                 onClick={() => {
                   copyTextToClipboard(streamKey);
                   const notification = toast.success(
@@ -178,7 +170,6 @@ const AppBody: React.FC<Props> = ({ state, setApiKey, createStream }) => {
                     {
                       style: {
                         border: "2px solid #000",
-                        // make bold
                         fontWeight: "bold",
                       },
                     }
@@ -190,32 +181,13 @@ const AppBody: React.FC<Props> = ({ state, setApiKey, createStream }) => {
                 Copy
               </button>
             </div>
-            {/* <div className="flex items-center justify-between mt-2 break-all">
-              <span>
-                <span className="font-bold">Playback URL:</span>
-                <br />
-                https://cdn.livepeer.com/hls/{playbackId}/index.m3u8
-              </span>
-              <button
-                onClick={() =>
-                  copyTextToClipboard(
-                    `https://cdn.livepeer.com/hls/${playbackId}/index.m3u8`
-                  )
-                }
-                className="border ml-1 p-1 rounded text-sm break-normal hover:bg-gray-400"
-              >
-                Copy
-              </button>
-            </div> */}
+
             <div className="flex items-center justify-between mt-4 break-all">
               <span>
                 <span className="font-bold">
                   Share video: <br />
                 </span>
-                {/* {`${"https://destemrlivepeer.vercel.app/"}video/${state.divKey.replace(
-                  "_",
-                  "-"
-                )}`} */}
+
                 {`https://destemrlivepeer.vercel.app/video/${state.divKey.replace(
                   "_",
                   "-"
@@ -226,7 +198,6 @@ const AppBody: React.FC<Props> = ({ state, setApiKey, createStream }) => {
                   toast.success("Stream URL copied to clipboard!", {
                     style: {
                       border: "2px solid #000",
-                      // make bold
                       fontWeight: "bold",
                     },
                   }) &&
@@ -243,66 +214,6 @@ const AppBody: React.FC<Props> = ({ state, setApiKey, createStream }) => {
               </button>
             </div>
           </div>
-          {/* <div className="w-11/12 lg:w-full xl:w-3/5 flex flex-col items-center mt-8">
-            <button
-              onClick={() => setShowRequest((val) => !val)}
-              className="text-gray-500 text-sm text-center w-full mb-2"
-            >
-              {showRequest ? "Hide" : "Show"} POST /stream request creating a
-              stream{" "}
-              <span className="text-xs">
-                {showRequest ? <>&#9650;</> : <>&#9660;</>}
-              </span>{" "}
-            </button>
-            {showRequest && (
-              <>
-                <fieldset className="w-full md:w-2/3 text-sm border border-dashed border-gray p-4 rounded flex flex-col">
-                  <legend>Request</legend>
-                  <div className="text-xs">
-                    Headers: <br />
-                    <textarea
-                      rows={5}
-                      cols={30}
-                      value={headers}
-                      disabled
-                      className="w-full resize-none leading-5"
-                      style={{
-                        fontFamily: "Lucida Console, Monospace",
-                      }}
-                    />
-                  </div>
-                  <div className="text-xs mt-8">
-                    Body: <br />
-                    <textarea
-                      rows={26}
-                      cols={30}
-                      value={body}
-                      disabled
-                      className="w-full resize-none leading-5"
-                      style={{
-                        fontFamily: "Lucida Console, Monospace",
-                      }}
-                    />
-                  </div>
-                </fieldset>
-                <fieldset className="w-full md:w-2/3 text-sm border border-dashed border-gray p-4 rounded flex flex-col">
-                  <legend>Response</legend>
-                  <div className="text-xs">
-                    <textarea
-                      rows={5}
-                      cols={30}
-                      value={response}
-                      disabled
-                      className="w-full resize-none leading-5"
-                      style={{
-                        fontFamily: "Lucida Console, Monospace",
-                      }}
-                    />
-                  </div>
-                </fieldset>
-              </>
-            )}
-          </div> */}
         </div>
       );
     default:
