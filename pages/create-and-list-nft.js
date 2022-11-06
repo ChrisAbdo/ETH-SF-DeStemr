@@ -194,7 +194,7 @@ const createItem = () => {
                   required
                 />
               </div>
-              <div className="form-control">
+              <div className="form-control rounded-none">
                 <label className="label">
                   <span className="label-text">Title</span>
                 </label>

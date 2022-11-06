@@ -205,7 +205,7 @@ const marketplace = () => {
                   key={i}
                   className="border-[2px] border-black shadow overflow-hidden hover:scale-[1.03] transform transition duration-500 ease-in-out mb-4"
                 >
-                  <figure className="flex items-center justify-center  w-full">
+                  <figure className="flex items-center justify-center  w-full rounded-none">
                     <audio
                       controls
                       controlsList="nodownload"
@@ -228,8 +228,8 @@ const marketplace = () => {
                       {nft.seller.slice(-4)}
                     </p>
                     <p className="space-x-2">
-                      <span className="badge">genre</span>
-                      <span className="badge">instrument</span>
+                      <span className="badge">GENRE</span>
+                      <span className="badge">INSTRUMENT</span>
                     </p>
                   </div>
 
