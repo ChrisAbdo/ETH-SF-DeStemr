@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 
 const Navbar = ({ Web3Handler, account }) => {
-  // use effect to make id=dropdown-menu have an animation of fading in from the top, pure css
   useEffect(() => {
     const dropdownMenu = document.getElementById("dropdown-menu");
     dropdownMenu.classList.add("animate-fade-in-down");
