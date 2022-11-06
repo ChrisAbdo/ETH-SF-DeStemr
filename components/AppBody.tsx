@@ -188,7 +188,7 @@ const AppBody: React.FC<Props> = ({ state, setApiKey, createStream }) => {
                   Share video: <br />
                 </span>
 
-                {`https://destemrlivepeer.vercel.app/video/${state.divKey.replace(
+                {`https://eth-sf-destemr.vercel.app/video/${state.divKey.replace(
                   "_",
                   "-"
                 )}`}
@@ -202,7 +202,7 @@ const AppBody: React.FC<Props> = ({ state, setApiKey, createStream }) => {
                     },
                   }) &&
                   copyTextToClipboard(
-                    `https://destemrlivepeer.vercel.app/video/${state.divKey.replace(
+                    `https://eth-sf-destemr.vercel.app/video/${state.divKey.replace(
                       "_",
                       "-"
                     )}`

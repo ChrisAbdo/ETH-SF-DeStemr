@@ -185,7 +185,7 @@ const marketplace = () => {
           <div className="drawer-content flex flex-col items-center mt-2 ">
             <label
               htmlFor="my-drawer-2"
-              className="relative inline-block px-4 py-2 group w-5/6 lg:hidden"
+              className="relative inline-block px-4 py-2 group w-full lg:hidden"
             >
               <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-[#ff90e8] group-hover:-translate-x-0 group-hover:-translate-y-0 border-black border-[2px]"></span>
               <span className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-[#ff90e8]"></span>
