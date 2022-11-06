@@ -1,19 +1,14 @@
-const colors = require("tailwindcss/colors");
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  future: {
-    // removeDeprecatedGapUtilities: true,
-    // purgeLayersByDefault: true,
-  },
-  purge: ["./**/*.html", "./**/*.tsx"],
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
-    colors: {
-      ...colors,
-      livepeer: {
-        DEFAULT: "#943CFF",
-      },
-    },
     extend: {},
   },
-  variants: {},
-  plugins: [],
+  daisyui: {
+    themes: ["light"],
+  },
+  plugins: [require("daisyui")],
 };
