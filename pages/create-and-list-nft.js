@@ -53,7 +53,6 @@ const createItem = () => {
   };
 
   async function onChange(e) {
-    // upload image to IPFS
     const file = e.target.files[0];
     try {
       const added = await client.add(file, {
@@ -72,7 +71,6 @@ const createItem = () => {
     if (!name || !description || !price || !supply || !royalty || !fileUrl) {
       return;
     } else {
-      // first, upload metadata to IPFS
       const data = JSON.stringify({
         name,
         description,
@@ -81,7 +79,6 @@ const createItem = () => {
       try {
         const added = await client.add(data);
         const url = `https://ipfs.io/ipfs/${added.path}`;
-        // after metadata is uploaded to IPFS, return the URL to use it in the transaction
         return url;
       } catch (error) {
         console.log("Error uploading file: ", error);
@@ -90,29 +87,17 @@ const createItem = () => {
   }
 
   async function listNFTForSale() {
-    // const notification = toast.loading(
-    //   "Make sure to confirm both transactions!"
-    // );
-    // custom toast notification with black border 2px
     const notification = toast.loading(
       "Make sure to confirm both transactions!",
       {
         style: {
           border: "2px solid #000",
-          // make bold
           fontWeight: "bold",
         },
       }
     );
 
     try {
-      // const web3Modal = new Web3Modal();
-      // const provider = await web3Modal.connect();
-      // const web3 = new Web3(provider);
-      // const url = await uploadToIPFS();
-      // const networkId = await web3.eth.net.getId();
-
-      // do the code above but do not use web3Modal
       const web3 = new Web3(window.ethereum);
       const provider = await window.ethereum.request({
         method: "eth_requestAccounts",
@@ -149,8 +134,7 @@ const createItem = () => {
             .send({ from: accounts[0], value: listingFee })
             .on("receipt", function () {
               console.log("listed");
-              // toast.success("Stem created", { id: notification });
-              // create a custom toast that has a black border 2px
+
               toast.success("NFT listed", {
                 id: notification,
                 style: {
@@ -159,7 +143,6 @@ const createItem = () => {
               });
 
               setLoading(false);
-              // wait 2 seconds, then reload the page
               setTimeout(() => {
                 router.push("/marketplace");
               }, 2000);
@@ -178,7 +161,6 @@ const createItem = () => {
           Publish Your First Stem
         </div>
       </div>
-      {/* two columns that split the page in a 30% 70% manner, 1 column per row in mobile view */}
       <div className="grid grid-cols-1 md:grid-cols-3 border-black min-h-screen">
         {/* left column */}
         <div className=" bg-base-200">
@@ -303,7 +285,6 @@ const createItem = () => {
           <div className="divider">or</div>
           <div className="card flex-shrink-0 w-full shadow-2xl bg-base-100 border-black border-[2px]">
             <div className="card-body">
-              {/* centered big text that says Not Ready to Sell? */}
               <div className="text-center text-2xl ">Not Ready to Sell?</div>
               <div className="text-center text-2xl ">
                 <p className="py-6">
@@ -324,8 +305,6 @@ const createItem = () => {
           </div>
         </div>
       </div>
-
-      {/* footer */}
     </div>
   );
 };

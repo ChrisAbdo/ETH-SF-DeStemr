@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import Web3 from "web3";
 import { Toaster } from "react-hot-toast";
 
-// make a type declaration for react-hot-toast
 declare global {
   interface Window {
     ethereum: any;
