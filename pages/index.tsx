@@ -1,199 +1,338 @@
 import React from "react";
+import Marquee from "react-fast-marquee";
+import Web3 from "web3";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
-import { APP_STATES } from "../utils/types";
-import AppBody from "../components/AppBody";
-import { createStream, getStreamStatus } from "../utils/apiFactory";
+const Home = () => {
+  const [account, setAccount] = React.useState("");
+  const [web3, setWeb3] = React.useState(null);
 
-const INITIAL_STATE = {
-  appState: APP_STATES.API_KEY,
-  apiKey: null,
-  jwPlayerAPIKey: null,
-  jwPlayerSecret: null,
-  streamTitle: null,
-  streamId: null,
-  playbackId: null,
-  streamKey: null,
-  streamIsActive: false,
-  jwPlayerHostedLibraryLink: null,
-  error: null,
-};
+  const router = useRouter();
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "SUBMIT_INPUTS":
-      return {
-        ...state,
-        appState: APP_STATES.CREATE_BUTTON,
-        apiKey: action.payload.apiKey,
-        jwPlayerAPIKey: action.payload.jwPlayerAPIKey,
-        jwPlayerSecret: action.payload.jwPlayerSecret,
-        streamTitle: action.payload.streamTitle,
-      };
-    case "CREATE_CLICKED":
-      return {
-        ...state,
-        appState: APP_STATES.CREATING_STREAM,
-      };
-    case "STREAM_CREATED":
-      return {
-        ...state,
-        appState: APP_STATES.WAITING_FOR_VIDEO,
-        streamId: action.payload.streamId,
-        playbackId: action.payload.playbackId,
-        streamKey: action.payload.streamKey,
-        jwPlayerHostedLibraryLink: action.payload.jwPlayerHostedLibraryLink,
-        divKey: action.payload.divKey,
-      };
-    case "VIDEO_STARTED":
-      return {
-        ...state,
-        appState: APP_STATES.SHOW_VIDEO,
-        streamIsActive: true,
-      };
-    case "VIDEO_STOPPED":
-      return {
-        ...state,
-        appState: APP_STATES.WAITING_FOR_VIDEO,
-        streamIsActive: false,
-      };
-    case "RESET_DEMO_CLICKED":
-      return {
-        ...INITIAL_STATE,
-      };
-    case "INVALID_API_KEY":
-      return {
-        ...state,
-        error: action.payload.message,
-      };
-    default:
-      break;
-  }
-};
+  const Web3Rerouter = async () => {
+    // const notification = toast.loading("Connecting account...")
+    // toast with black border 2px
+    const notification = toast.loading("Connecting account...", {
+      style: {
+        border: "2px solid #000",
+      },
+    });
+    try {
+      const account = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
 
-export default function App() {
-  const [state, dispatch] = React.useReducer(reducer, INITIAL_STATE);
-
-  React.useEffect(() => {
-    if (state.appState === APP_STATES.CREATING_STREAM) {
-      (async function () {
-        try {
-          const streamCreateResponse = await createStream(
-            state.apiKey,
-            state.jwPlayerAPIKey,
-            state.jwPlayerSecret,
-            state.streamTitle
-          );
-          if (streamCreateResponse.data) {
-            const {
-              id: streamId,
-              playbackId,
-              streamKey,
-              jwPlayerHostedLibraryLink,
-              divKey,
-            } = streamCreateResponse.data;
-            dispatch({
-              type: "STREAM_CREATED",
-              payload: {
-                streamId,
-                playbackId,
-                streamKey,
-                jwPlayerHostedLibraryLink,
-                divKey,
-              },
-            });
-          }
-        } catch (error) {
-          if (error.response.status === 403) {
-            dispatch({
-              type: "INVALID_API_KEY",
-              payload: {
-                message:
-                  "Invalid API Key. Please try again with right API key!",
-              },
-            });
-          } else {
-            dispatch({
-              type: "INVALID_API_KEY",
-              payload: {
-                message:
-                  "Something went wrong! Please try again after sometime",
-              },
-            });
-          }
-        }
-      })();
+      const web3 = new Web3(window.ethereum);
+      setAccount(account[0]);
+      setWeb3(web3);
+      toast.success("Account connected", {
+        id: notification,
+      });
+      // wait for 2 seconds then router to /marketplace
+      setTimeout(() => {
+        router.push("/marketplace");
+      }, 2000);
+    } catch (err) {
+      console.log(err);
+      toast.error("Account not connected", {
+        id: notification,
+      });
     }
-
-    let interval;
-    if (state.streamId) {
-      interval = setInterval(async () => {
-        const streamStatusResponse = await getStreamStatus(
-          state.apiKey,
-          state.streamId
-        );
-        if (streamStatusResponse.data) {
-          const { isActive } = streamStatusResponse.data;
-          dispatch({
-            type: isActive ? "VIDEO_STARTED" : "VIDEO_STOPPED",
-          });
-        }
-      }, 5000);
-    }
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [state.appState]);
+  };
 
   return (
-    <main className="container pb-12 h-screen m-auto pt-24 lg:pt-40">
-      <header className="w-full p-3 flex justify-between items-center fixed top-0 left-0 z-10 bg-white">
-        <a
-          href="https://livepeer.com/docs/"
-          target="_blank"
-          rel="noopener, nofollow"
-          className="logo flex flex-col flex-1 lg:w-1/5"
-        >
-          <h1 className="font-bold text-xl">Livepeer.com API Demo</h1>
-        </a>
+    <div>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 border-b-[2px] border-black lg:divide-x-[2px] lg:divide-black 
+        xs:dive-y-[2px] xs:divide-black
+      "
+      >
+        <div className="bg-[#ff90e8]  border-black">
+          <h1 className="text-6xl md:text-7xl md:font-normal  font-bold text-left align-center pt-20 pl-20 xs:text-6xl">
+            Sell your sounds
+          </h1>
 
-        <button
-          className="border p-2 h-1/2 rounded border-livepeer hover:bg-livepeer hover:text-white"
-          onClick={() => dispatch({ type: "RESET_DEMO_CLICKED" })}
-        >
-          Reset Demo
-        </button>
-      </header>
-      <AppBody
-        state={state}
-        setApiKey={(apiKey, jwPlayerAPIKey, jwPlayerSecret, streamTitle) =>
-          dispatch({
-            type: "SUBMIT_INPUTS",
-            payload: { apiKey, jwPlayerAPIKey, jwPlayerSecret, streamTitle },
-          })
-        }
-        createStream={() => dispatch({ type: "CREATE_CLICKED" })}
-      />
-      <footer className="fixed bottom-0 left-0 w-full h-12 flex items-center justify-center">
-        Made with the&nbsp;
-        <a href="https://livepeer.com/docs/" className="text-livepeer text-xl">
-          Livepeer.com
-        </a>
-        &nbsp;API
-      </footer>
-      {state.error && (
-        <div className="bg-black bg-opacity-60 flex items-center justify-center fixed top-0 left-0 h-screen w-screen">
-          <div className="flex flex-col w-1/3 h-56 bg-white p-12 items-center text-center text-lg rounded">
-            {state.error}
-            <button
-              className="border p-2 w-1/3 rounded border-livepeer hover:bg-livepeer hover:text-white mt-4"
-              onClick={() => dispatch({ type: "RESET_DEMO_CLICKED" })}
+          <p className="text-2xl md:text-left align-center pt-10 pl-20 pr-28 xs:text-center">
+            With DeStemr, it's never been easier to get paid crypto royalties
+            for your sounds.
+          </p>
+
+          <div className="flex justify-center pt-20 pb-10 ">
+            <div
+              onClick={Web3Rerouter}
+              className="cursor-pointer relative inline-block px-4 py-2  group w-2/3 text-center items-center justify-center"
             >
-              Retry
-            </button>
+              <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-[#ffc900] group-hover:-translate-x-0 group-hover:-translate-y-0 border-black border-[2px]"></span>
+              <span className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-[#ffc900]"></span>
+              <span className="relative text-black group-hover:text-black ">
+                Get Started
+              </span>
+            </div>
           </div>
         </div>
-      )}
-    </main>
+
+        <div className="bg-[#ffc900]">
+          <img
+            src="/robot2.png"
+            alt="background"
+            className="w-3/5 mx-auto  border-black border-[2px] mt-20"
+          />
+          <h1 className="text-2xl md:text-2xl md:font-normal text-left align-center pt-20 pl-1 xs:text-6xl">
+            generated by DALL·E 2
+          </h1>
+        </div>
+      </div>
+
+      <Marquee
+        gradient={false}
+        speed={20}
+        className="bg-black text-7xl text-center pt-10 pb-10 text-white"
+      >
+        Sell your sounds · Sell your sounds · Sell your sounds · Sell your
+        sounds ·
+      </Marquee>
+
+      <div className="flex flex-col text-center items-center">
+        <h1 className="text-6xl md:text-7xl md:font-normal  font-bold text-left align-center pt-20 xs:text-6xl pb-20">
+          Why DeStemr
+        </h1>
+      </div>
+
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 border-b-[2px] border-t-[2px] border-black lg:divide-x-[2px] lg:divide-black 
+        xs:dive-y-[2px] xs:divide-black
+      "
+      >
+        <div className="bg-[#6AB313]  border-black">
+          <h1 className="text-6xl md:text-7xl md:font-normal  font-bold text-left align-center pt-20 pl-20 xs:text-6xl">
+            Get paid to inspire
+          </h1>
+
+          <p className="text-2xl md:text-left align-center pt-10 pl-20 pr-28 xs:text-center">
+            Sounds are recycled all the time. Why not get paid for it?
+          </p>
+
+          <div className="flex justify-center  pt-12 pb-10 ">
+            {/* <a
+              href="#_"
+              className="relative inline-block px-4 py-2  group w-2/3 text-center items-center justify-center"
+            >
+              <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-[#ff90e8] group-hover:-translate-x-0 group-hover:-translate-y-0 border-black border-[2px]"></span>
+              <span className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-[#ff90e8]"></span>
+              <span className="relative text-black group-hover:text-black ">
+                Get Started
+              </span>
+            </a> */}
+
+            {/* make a list of 5 things with a leading &rarr; */}
+            <div className="my-2 flex max-w-sm flex-col gap-2 text-left">
+              <div className="flex gap-2">
+                <svg
+                  width="20"
+                  height="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="inline-block h-6 w-6 stroke-current"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>{" "}
+                Earn royalties in MATIC &amp; ETH
+              </div>{" "}
+              <div className="flex gap-2">
+                <svg
+                  width="20"
+                  height="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="inline-block h-6 w-6 stroke-current"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>{" "}
+                Profit off your viral sounds
+              </div>{" "}
+              <div className="flex gap-2">
+                <svg
+                  width="20"
+                  height="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="inline-block h-6 w-6 stroke-current"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>{" "}
+                Multiple supported file formats
+              </div>{" "}
+              <div className="flex gap-2">
+                <svg
+                  width="20"
+                  height="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="inline-block h-6 w-6 stroke-current"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>{" "}
+                No minimum payout
+              </div>{" "}
+              <div className="flex gap-2">
+                <svg
+                  width="20"
+                  height="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="inline-block h-6 w-6 stroke-current"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>{" "}
+                Quick &amp; easy payouts
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-[#ff90e8]">
+          <img
+            src="/music.png"
+            alt="background"
+            className="w-3/5 mx-auto  border-black border-[2px] mt-20"
+          />
+          <h1 className="text-2xl md:text-2xl md:font-normal text-left align-center pt-24 pl-1 xs:text-6xl">
+            generated by DALL·E 2
+          </h1>
+        </div>
+      </div>
+
+      <div className="hero bg-[#23a094]">
+        <div className="hero-content flex-col lg:flex-row py-12 px-12">
+          <img
+            src="/wowzers.png"
+            className="w-1/2 mx-auto bg-[#ffc900] border-black border-[2px]"
+          />
+          <div className="pl-5">
+            <h1 className="text-5xl font-bold">Multi Chain Music NFTs</h1>
+            <p className="py-6">
+              Once you own a Stem, you are able to use and profit from it in
+              your own songs as you see fit. You can also resell your Stem on
+              the Stem Marketplace to earn a quick payout.
+            </p>
+
+            <div className="flex gap-2 text-center">
+              <a
+                href="/create-and-list-nft"
+                className="relative inline-block px-4 py-2  group w-full text-center items-center justify-center"
+              >
+                <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-[#ffc900] group-hover:-translate-x-0 group-hover:-translate-y-0 border-black border-[2px]"></span>
+                <span className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-[#ffc900]"></span>
+                <span className="relative text-black group-hover:text-black ">
+                  Mint a Stem
+                </span>
+              </a>
+              <a
+                href="/marketplace"
+                className="relative inline-block px-4 py-2  group w-full text-center items-center justify-center"
+              >
+                <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-[#ff90e8] group-hover:-translate-x-0 group-hover:-translate-y-0 border-black border-[2px]"></span>
+                <span className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-[#ff90e8]"></span>
+                <span className="relative text-black group-hover:text-black ">
+                  Purchase a Stem
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bottom-0 w-full ">
+        <footer className="footer items-center p-4 bottom-0 border-black border-t">
+          <div className="items-center grid-flow-col ">
+            🛠
+            <p>built by Chris Abdo</p>
+          </div>
+          <div className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://www.twitter.com/chrisabdo_eth"
+              className="hover:text-primary"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                className="fill-current"
+              >
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path>
+              </svg>
+            </a>
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://www.github.com/chrisabdo"
+              className="hover:text-primary"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                className="fill-current"
+              >
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              </svg>
+            </a>
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://www.linkedin.com/in/christopher-abdo/"
+              className="hover:text-primary"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                className="fill-current"
+              >
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
+            </a>
+          </div>
+        </footer>
+      </div>
+    </div>
   );
-}
+};
+
+export default Home;
