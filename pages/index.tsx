@@ -11,8 +11,6 @@ const Home = () => {
   const router = useRouter();
 
   const Web3Rerouter = async () => {
-    // const notification = toast.loading("Connecting account...")
-    // toast with black border 2px
     const notification = toast.loading("Connecting account...", {
       style: {
         border: "2px solid #000",
@@ -29,7 +27,6 @@ const Home = () => {
       toast.success("Account connected", {
         id: notification,
       });
-      // wait for 2 seconds then router to /marketplace
       setTimeout(() => {
         router.push("/marketplace");
       }, 2000);
@@ -114,18 +111,6 @@ const Home = () => {
           </p>
 
           <div className="flex justify-center  pt-12 pb-10 ">
-            {/* <a
-              href="#_"
-              className="relative inline-block px-4 py-2  group w-2/3 text-center items-center justify-center"
-            >
-              <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-[#ff90e8] group-hover:-translate-x-0 group-hover:-translate-y-0 border-black border-[2px]"></span>
-              <span className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-[#ff90e8]"></span>
-              <span className="relative text-black group-hover:text-black ">
-                Get Started
-              </span>
-            </a> */}
-
-            {/* make a list of 5 things with a leading &rarr; */}
             <div className="my-2 flex max-w-sm flex-col gap-2 text-left">
               <div className="flex gap-2">
                 <svg
