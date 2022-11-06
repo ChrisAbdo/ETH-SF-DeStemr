@@ -183,12 +183,6 @@ const marketplace = () => {
         <div className="drawer drawer-mobile fixed">
           <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content flex flex-col items-center mt-2 ">
-            {/* <label
-              htmlFor="my-drawer-2"
-              className="btn btn-primary drawer-button lg:hidden w-full"
-            >
-              Open drawer
-            </label> */}
             <label
               htmlFor="my-drawer-2"
               className="relative inline-block px-4 py-2 group w-5/6 lg:hidden"
@@ -200,9 +194,6 @@ const marketplace = () => {
               </span>
             </label>
 
-            {/* <p className="text-2xl font-bold mb-4">
-                      {Web3.utils.fromWei(nft.price, "ether")} MATIC
-                    </p> */}
             <div className="flex justify-center items-center mt-4 mb-2">
               <div className="text-4xl font-bold text-center">
                 Stem Marketplace
@@ -232,8 +223,6 @@ const marketplace = () => {
                       {nft.description}
                     </p>
                     <p>
-                      {/* Uploaded by: {nft.seller.slice(0, 5)}...
-                      {nft.seller.slice(-4)} */}
                       <span className="font-semibold">Uploaded by: </span>
                       {nft.seller.slice(0, 5)}...
                       {nft.seller.slice(-4)}
@@ -244,28 +233,6 @@ const marketplace = () => {
                     </p>
                   </div>
 
-                  {/* <div className="stats shadow border-t-[2px] border-black w-full rounded-none">
-                    <div className="stat place-items-center border-r-[2px] border-black">
-                      <div className=" font-bold">Price</div>
-                      <div className="stat-value">
-                        {Web3.utils.fromWei(nft.price, "ether")}
-                      </div>
-                      <div className=" font-bold text-black">MATIC</div>
-                    </div>
-                    <div className="stat place-items-center">
-                      <div className="font-bold">Supply</div>
-                      <div className="stat-value text-secondary">
-                        {nft.supply}
-                      </div>
-                      <div className="font-bold">LEFT</div>
-                    </div>
-                    <div className="stat place-items-center border-l-[2px] border-black">
-                      <div className="font-bold">Royalty Share</div>
-                      <div className="stat-value">{nft.royalty}%</div>
-                      <div className="font-bold">PERCENT</div>
-                    </div>
-                  </div> */}
-                  {/* do the code above but fix the border issue with the one next to royalty share not being 2px */}
                   <div className="stats shadow border-t-[2px] border-black w-full rounded-none">
                     <div className="stat place-items-center border-r-[2px] border-black">
                       <div className=" font-bold">Price</div>
