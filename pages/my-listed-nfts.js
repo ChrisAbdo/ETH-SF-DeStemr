@@ -17,7 +17,6 @@ const MyListedNFTS = () => {
     const web3 = new Web3(window.ethereum);
     const networkId = await web3.eth.net.getId();
 
-    // Get listed NFTs
     const marketPlaceContract = new web3.eth.Contract(
       Marketplace.abi,
       Marketplace.networks[networkId].address
