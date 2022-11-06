@@ -204,20 +204,3 @@ export default function Stream() {
     </main>
   );
 }
-
-// const [account, setAccount] = React.useState(null);
-//   const [web3, setWeb3] = React.useState(null);
-
-//   const Web3Handler = async () => {
-//     try {
-//       const account = await window.ethereum.request({
-//         method: "eth_requestAccounts",
-//       });
-
-//       const web3 = new Web3(window.ethereum);
-//       setAccount(account[0]);
-//       setWeb3(web3);
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
